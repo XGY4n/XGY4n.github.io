@@ -34,17 +34,33 @@
     border-bottom: 1px solid var(--line);
   }
 
+  /* 眼睛拆成两层：底图（瞳孔已抹掉）+ 瞳孔层。两张图同为 237×237、
+     共用同一像素网格，所以静止时严丝合缝，整层平移就是眼珠转动。
+     素材由 eye.png 生成，换图时重新拆一次即可。 */
   .eye {
-    display: block;
+    position: relative;
     width: 237px;
     max-width: 55vw;
-    height: auto;
     margin: 0 auto;
-    image-rendering: pixelated;
     filter: drop-shadow(0 0 48px rgba(179, 36, 42, 0.45));
     /* 图标本身是不透明深灰底，用径向遮罩把方形边缘化开 */
     -webkit-mask-image: radial-gradient(ellipse 64% 68% at 50% 50%, #000 34%, transparent 90%);
     mask-image: radial-gradient(ellipse 64% 68% at 50% 50%, #000 34%, transparent 90%);
+  }
+
+  .eye img {
+    display: block;
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+  }
+
+  /* 位移取整，避免小数像素在 pixelated 下产生抖动或糊边 */
+  .eye-pupil {
+    position: absolute;
+    top: 0;
+    left: 0;
+    will-change: transform;
   }
 
   h1 {
@@ -140,14 +156,6 @@
     margin: 0;
     padding: 4.5rem 1.5rem;
     border-bottom: 1px solid var(--line);
-    background-color: #070708;
-    background-image:
-      linear-gradient(90deg, rgba(7, 7, 8, 0.97) 0%, rgba(7, 7, 8, 0.94) 55%, rgba(7, 7, 8, 0.45) 100%),
-      url("menu-bg.png");
-    background-size: cover, cover;
-    background-position: center, right center;
-    background-repeat: no-repeat, no-repeat;
-    image-rendering: pixelated;
   }
 
   .card-inner {
@@ -189,16 +197,16 @@
     .hero { padding: 3.5rem 1.25rem 3rem; }
     h1 { letter-spacing: 0.16em; text-indent: 0.16em; }
     .card { padding: 3rem 0; }
-    .card { background-image:
-      linear-gradient(180deg, rgba(7, 7, 8, 0.9) 0%, rgba(7, 7, 8, 0.97) 100%),
-      url("menu-bg.png"); }
   }
 </style>
 </head>
 <body>
 
 <header class="hero">
-  <img class="eye" src="eye.png" width="237" height="237" alt="Peeper 的标志：一只流着血泪的像素红眼">
+  <div class="eye" role="img" aria-label="Peeper 的标志：一只流着血泪的像素红眼，瞳孔会跟着鼠标转">
+    <img src="eye-base.png" width="237" height="237" alt="">
+    <img class="eye-pupil" src="eye-pupil.png" width="237" height="237" alt="">
+  </div>
   <h1>PEEPER</h1>
   <p class="tagline">像素 3D · 45° 俯视 · 心理恐怖</p>
   <p class="themes">邪教 · 祭祀 · 阴谋 · 越战尾声的美国</p>
@@ -260,6 +268,78 @@
 <footer class="site-footer">
   <a href="../">← 返回首页</a>
 </footer>
+
+<script>
+  /* 瞳孔跟随鼠标：算出指针相对眼眶中心的方向，归一化后映射到位移上限。
+     虹膜上下余量不对称（上 5px、下 14px），所以纵向限位分开设。 */
+  (function () {
+    var eye = document.querySelector('.eye');
+    var pupil = document.querySelector('.eye-pupil');
+    if (!eye || !pupil || !window.requestAnimationFrame) return;
+
+    var ART = 237;        // 素材原始宽度，用来把位移换算回原始像素
+    var MAX_X = 13;       // 水平最大位移（原始像素）
+    var MAX_UP = 4;
+    var MAX_DOWN = 7;
+    var REACH = 240;      // 指针离眼眶中心多远时到达最大位移
+    var EASE = 0.18;      // 缓动系数，越大越跟手
+
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var tx = 0, ty = 0, mx = 0, my = 0;
+    var px = 0, py = 0, scale = 1, raf = 0, tracking = false;
+
+    function frame() {
+      raf = 0;
+      var k = reduce ? 1 : EASE;
+      tx += (mx - tx) * k;
+      ty += (my - ty) * k;
+      if (Math.abs(mx - tx) < 0.01 && Math.abs(my - ty) < 0.01) { tx = mx; ty = my; }
+      pupil.style.transform =
+        'translate(' + Math.round(tx * scale) + 'px,' + Math.round(ty * scale) + 'px)';
+      if (tx !== mx || ty !== my) raf = requestAnimationFrame(frame);
+    }
+
+    function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+
+    function aim() {
+      if (!tracking) return;
+      var r = eye.getBoundingClientRect();
+      if (!r.width) return;
+      scale = r.width / ART;
+      var ax = (px - (r.left + r.width / 2)) / REACH;
+      var ay = (py - (r.top + r.height / 2)) / REACH;
+      ax = ax < -1 ? -1 : ax > 1 ? 1 : ax;
+      ay = ay < -1 ? -1 : ay > 1 ? 1 : ay;
+      mx = ax * MAX_X;
+      my = ay * (ay < 0 ? MAX_UP : MAX_DOWN);
+      kick();
+    }
+
+    function onMove(e) {
+      px = e.clientX;
+      py = e.clientY;
+      tracking = true;
+      aim();
+    }
+
+    function recenter() {
+      tracking = false;
+      mx = 0;
+      my = 0;
+      kick();
+    }
+
+    window.addEventListener('pointermove', onMove, { passive: true });
+    window.addEventListener('pointerdown', onMove, { passive: true });
+    window.addEventListener('pointerup', function (e) {
+      if (e.pointerType !== 'mouse') recenter();   // 触摸抬手后归位
+    }, { passive: true });
+    window.addEventListener('scroll', aim, { passive: true });
+    window.addEventListener('resize', aim);
+    document.addEventListener('mouseleave', recenter);
+    window.addEventListener('blur', recenter);
+  })();
+</script>
 
 </body>
 </html>
