@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Peeper — 像素 3D 心理恐怖游戏</title>
+<meta name="description" content="Peeper 是一款像素 3D 心理恐怖游戏：越战尾声的美国，一名失忆的男人在宵禁的城市里，被一场无法解除的饥渴引向一间酒吧。">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0b0b0d;
+    --fg: #e8e8ee;
+    --body: #b9b9c6;
+    --line: #1e1e23;
+    --blood: #b3242a;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  /* ---------- 首屏 ---------- */
+
+  .hero {
+    padding: 5rem 1.5rem 4rem;
+    text-align: center;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .eye {
+    display: block;
+    width: 237px;
+    max-width: 55vw;
+    height: auto;
+    margin: 0 auto;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 0 48px rgba(179, 36, 42, 0.45));
+    /* 图标本身是不透明深灰底，用径向遮罩把方形边缘化开 */
+    -webkit-mask-image: radial-gradient(ellipse 64% 68% at 50% 50%, #000 34%, transparent 90%);
+    mask-image: radial-gradient(ellipse 64% 68% at 50% 50%, #000 34%, transparent 90%);
+  }
+
+  h1 {
+    margin: 1.75rem 0 0;
+    font-size: clamp(2.5rem, 9vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: 0.24em;
+    text-indent: 0.24em;
+  }
+
+  .tagline {
+    margin: 1.25rem 0 0;
+    color: var(--blood);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+  }
+
+  .themes {
+    margin: 0.5rem 0 0;
+    color: #6f6f7d;
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+  }
+
+  .lede {
+    max-width: 36rem;
+    margin: 2.5rem auto 0;
+    color: var(--body);
+    font-size: 1.05rem;
+  }
+
+  /* ---------- 正文 ---------- */
+
+  main {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  section {
+    padding: 3.5rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  h2 {
+    margin: 0 0 1.5rem;
+    color: var(--blood);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+  }
+
+  p {
+    margin: 0 0 1.1rem;
+    color: var(--body);
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  strong { color: var(--fg); }
+
+  .quote-line {
+    margin: 1.5rem 0;
+    padding-left: 1.1rem;
+    border-left: 2px solid var(--blood);
+    color: #d6d6e2;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    margin-bottom: 1.1rem;
+    padding-left: 1.1rem;
+    color: var(--body);
+    border-left: 2px solid var(--line);
+  }
+
+  li:last-child { margin-bottom: 0; }
+
+  li b {
+    color: var(--fg);
+    font-weight: 600;
+  }
+
+  /* ---------- 开场引言 ---------- */
+
+  .card {
+    margin: 0;
+    padding: 4.5rem 1.5rem;
+    border-bottom: 1px solid var(--line);
+    background-color: #070708;
+    background-image:
+      linear-gradient(90deg, rgba(7, 7, 8, 0.97) 0%, rgba(7, 7, 8, 0.94) 55%, rgba(7, 7, 8, 0.45) 100%),
+      url("menu-bg.png");
+    background-size: cover, cover;
+    background-position: center, right center;
+    background-repeat: no-repeat, no-repeat;
+    image-rendering: pixelated;
+  }
+
+  .card-inner {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .card p {
+    margin: 0 0 1.25rem;
+    color: #d6d6e2;
+  }
+
+  .card cite {
+    display: block;
+    color: #6f6f7d;
+    font-size: 0.8rem;
+    font-style: normal;
+    letter-spacing: 0.16em;
+  }
+
+  /* ---------- 页脚 ---------- */
+
+  .site-footer {
+    padding: 3rem 1.5rem 4rem;
+    text-align: center;
+  }
+
+  .site-footer a {
+    color: #6f6f7d;
+    font-size: 0.85rem;
+    letter-spacing: 0.14em;
+    text-decoration: none;
+  }
+
+  .site-footer a:hover { color: var(--blood); }
+
+  @media (max-width: 480px) {
+    .hero { padding: 3.5rem 1.25rem 3rem; }
+    h1 { letter-spacing: 0.16em; text-indent: 0.16em; }
+    .card { padding: 3rem 0; }
+    .card { background-image:
+      linear-gradient(180deg, rgba(7, 7, 8, 0.9) 0%, rgba(7, 7, 8, 0.97) 100%),
+      url("menu-bg.png"); }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <img class="eye" src="eye.png" width="237" height="237" alt="Peeper 的标志：一只流着血泪的像素红眼">
+  <h1>PEEPER</h1>
+  <p class="tagline">像素 3D · 45° 俯视 · 心理恐怖</p>
+  <p class="themes">邪教 · 祭祀 · 阴谋 · 越战尾声的美国</p>
+  <p class="lede">一座接连有孩子失踪的城市，一间在宵禁中照常营业的酒吧，和一个醒来时不记得自己是谁的男人——以及他无法解除的饥渴。</p>
+</header>
+
+<main>
+
+  <section>
+    <h2>雨夜，1970</h2>
+    <p>电视里循环播放着越战结束的新闻。工厂在裁员，物价一天高过一天。入夜之后是宵禁、警笛，和十几起儿童失踪案的报道——市长已宣布全市进入紧急状态。</p>
+    <p>你在一条雨里的小巷中醒来。身上没有伤口，周围没有任何东西能解释你为什么会在这里，你也无法完整回忆起醒来之前究竟发生了什么。</p>
+    <p>唯一清晰的是那股饥渴。它把你带到了一间酒吧门前。</p>
+  </section>
+
+  <section>
+    <h2>他们都在谈论「父」</h2>
+    <p class="quote-line">水使我们出生，尘土使我们成形，火使我们洁净，而风……终将把我们带回父的身边。</p>
+    <p>楼上穿着黑袍的人这样念诵。老板写在墙上的则是另一套次序：第一杯，当如火；第二杯，当如血；第三杯，不可问它的名。</p>
+    <p>酒吧里挂的画不是随手摆的道具——《冥界之岛》《以撒的献祭》《路西法》——全部取自真实的美术史。殉道、献祭与引路的母题，挂在通往楼上的每一级台阶边。</p>
+    <p>报纸、警长、电视新闻，每个人都在谈论同一件事，却没有人说出它真正的名字。</p>
+  </section>
+
+  <section>
+    <h2>像素是渲染出来的，不是滤镜</h2>
+    <p>整个 3D 世界先被渲染进一张 <strong>363 × 205</strong> 的视口，再整数倍放大到你的屏幕上。相机是固定的正交投影、45° 俯视。</p>
+    <p>角色移动时会被吸附到像素格上，让画面在运动中保持稳定——不抖，不糊。这是为像素画专门写的一条渲染管线，而不是盖在画面上的后期滤镜。</p>
+    <p>再配上一层固定的冷蓝月光、永远在下的大雨、体积雾，和会自己断电的灯。</p>
+  </section>
+
+  <section>
+    <h2>怎么玩</h2>
+    <ul>
+      <li><b>探索与检视</b>——在 45° 俯视下走动（WASD 移动，TAB 打开背包），可以把一幅画、一张纸条拉到眼前细看。</li>
+      <li><b>对话</b>——带选项与物品条件的对话树；说错话会错过东西。</li>
+      <li><b>解谜</b>——在物品栏与台座之间拖拽摆放：祭坛的谜题、转盘密码锁、酒架排序、炼金台的四步配方。</li>
+      <li><b>躲藏</b>——钻进柜子里，视野被压成一条缝。</li>
+      <li><b>氛围</b>——手电筒、随机停电、存档点。</li>
+    </ul>
+  </section>
+
+</main>
+
+<blockquote class="card" id="opening">
+  <div class="card-inner">
+    <p>你在雨夜的一条小巷里突然醒来。你不知道自己为什么会出现在这里，也无法完整地回忆起，在醒来之前究竟发生了什么。</p>
+    <p>身上没有明显的伤口，周围也没有任何东西能够解释眼前的状况。然而，不远处传来的警笛声提醒着你——这里恐怕并不安全。</p>
+    <cite>—— 游戏开场</cite>
+  </div>
+</blockquote>
+
+<main>
+  <section>
+    <h2>现在</h2>
+    <p>目前是一个可玩的 Demo，包含序章的全部流程。用 Godot 4.7.1 + C# 开发，内置中文与 English 双语。</p>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <a href="../">← 返回首页</a>
+</footer>
+
+</body>
+</html>
