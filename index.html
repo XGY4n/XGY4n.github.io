@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TROCAR Works</title>
+<meta name="description" content="TROCAR Works">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0e0e11;
+    --fg: #ececf1;
+    --muted: #8a8a99;
+    --accent: #6ee7b7;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    line-height: 1.6;
+  }
+
+  main {
+    text-align: center;
+    max-width: 36rem;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+
+  h1::after {
+    content: "";
+    display: block;
+    width: 3rem;
+    height: 2px;
+    margin: 1.25rem auto 0;
+    background: var(--accent);
+  }
+
+  p {
+    margin: 1.25rem 0 0;
+    color: var(--muted);
+    font-size: 1rem;
+  }
+</style>
+</head>
+<body>
+  <main>
+    <h1>TROCAR Works</h1>
+    <p>站点建设中</p>
+  </main>
+</body>
+</html>
