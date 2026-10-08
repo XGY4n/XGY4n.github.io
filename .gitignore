@@ -1,0 +1,21 @@
+# ---- IDE ----
+
+# Visual Studio 打开文件夹时自动生成的缓存：解决方案状态、Copilot 代码索引等。
+# 属于本机数据，每台机器都不一样，而且会随操作不断变动。
+.vs/
+
+# VS Code / JetBrains 的本地配置。
+# 若以后想共享 .vscode/settings.json 之类的设置，用 git add -f 单独加回来。
+.vscode/
+.idea/
+
+# 编辑器临时文件
+*~
+*.swp
+*.swo
+
+# ---- 操作系统 ----
+
+.DS_Store
+Thumbs.db
+desktop.ini
