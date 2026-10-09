@@ -1,204 +1,225 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Peeper — 像素 3D 心理恐怖游戏</title>
-<meta name="description" content="Peeper 是一款像素 3D 心理恐怖游戏：越战尾声的美国，一名失忆的男人在宵禁的城市里，被一场无法解除的饥渴引向一间酒吧。">
-<style>
-  :root {
-    color-scheme: dark;
-    --bg: #0b0b0d;
-    --fg: #e8e8ee;
-    --body: #b9b9c6;
-    --line: #1e1e23;
-    --blood: #b3242a;
-  }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Peeper — 像素 3D 心理恐怖游戏</title>
+    <meta name="description" content="Peeper 是一款像素 3D 心理恐怖游戏：越战尾声的美国，一名失忆的男人在宵禁的城市里，被一场无法解除的饥渴引向一间酒吧。">
+    <style>
+           :root {
+               color-scheme: dark;
+               --bg: #0b0b0d;
+               --fg: #e8e8ee;
+               --body: #b9b9c6;
+               --line: #1e1e23;
+               --blood: #b3242a;
+           }
 
-  * { box-sizing: border-box; }
+           * {
+               box-sizing: border-box;
+           }
 
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--fg);
-    font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
-    font-size: 16px;
-    line-height: 1.8;
-  }
+           body {
+               margin: 0;
+               background: var(--bg);
+               color: var(--fg);
+               font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+               font-size: 16px;
+               line-height: 1.8;
+           }
 
-  /* ---------- 首屏 ---------- */
+           /* ---------- 首屏 ---------- */
 
-  .hero {
-    padding: 5rem 1.5rem 4rem;
-    text-align: center;
-    border-bottom: 1px solid var(--line);
-  }
+           .hero {
+               padding: 5rem 1.5rem 4rem;
+               text-align: center;
+               border-bottom: 1px solid var(--line);
+           }
 
-  /* 眼睛拆成两层：底图（瞳孔已抹掉）+ 瞳孔层。两张图同为 237×237、
-     共用同一像素网格，所以静止时严丝合缝，整层平移就是眼珠转动。
-     素材由 eye.png 生成，换图时重新拆一次即可。 */
-  .eye {
-    position: relative;
-    width: 237px;
-    max-width: 55vw;
-    margin: 0 auto;
-    filter: drop-shadow(0 0 48px rgba(179, 36, 42, 0.45));
-    /* 图标本身是不透明深灰底，用径向遮罩把方形边缘化开 */
-    -webkit-mask-image: radial-gradient(ellipse 64% 68% at 50% 50%, #000 34%, transparent 90%);
-    mask-image: radial-gradient(ellipse 64% 68% at 50% 50%, #000 34%, transparent 90%);
-  }
+           /* 眼睛拆成两层：底图（瞳孔已抹掉）+ 瞳孔层。两张图同为 237×237、
+        共用同一像素网格，所以静止时严丝合缝，整层平移就是眼珠转动。
+        素材由 eye.png 生成，换图时重新拆一次即可。 */
+           .eye {
+               position: relative;
+               width: 237px;
+               max-width: 55vw;
+               margin: 0 auto;
+               filter: drop-shadow(0 0 48px rgba(179, 36, 42, 0.45));
+               /* 图标本身是不透明深灰底，用径向遮罩把方形边缘化开 */
+               -webkit-mask-image: radial-gradient(ellipse 64% 68% at 50% 50%, #000 34%, transparent 90%);
+               mask-image: radial-gradient(ellipse 64% 68% at 50% 50%, #000 34%, transparent 90%);
+           }
 
-  .eye img {
-    display: block;
-    width: 100%;
-    height: auto;
-    image-rendering: pixelated;
-  }
+               .eye img {
+                   display: block;
+                   width: 100%;
+                   height: auto;
+                   image-rendering: pixelated;
+               }
 
-  /* 位移取整，避免小数像素在 pixelated 下产生抖动或糊边 */
-  .eye-pupil {
-    position: absolute;
-    top: 0;
-    left: 0;
-    will-change: transform;
-  }
+           /* 位移取整，避免小数像素在 pixelated 下产生抖动或糊边 */
+           .eye-pupil {
+               position: absolute;
+               top: 0;
+               left: 0;
+               will-change: transform;
+           }
 
-  h1 {
-    margin: 1.75rem 0 0;
-    font-size: clamp(2.5rem, 9vw, 4.5rem);
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: 0.24em;
-    text-indent: 0.24em;
-  }
+           h1 {
+               margin: 1.75rem 0 0;
+               font-size: clamp(2.5rem, 9vw, 4.5rem);
+               font-weight: 700;
+               line-height: 1.1;
+               letter-spacing: 0.24em;
+               text-indent: 0.24em;
+           }
 
-  .tagline {
-    margin: 1.25rem 0 0;
-    color: var(--blood);
-    font-size: 0.85rem;
-    letter-spacing: 0.2em;
-  }
+           .tagline {
+               margin: 1.25rem 0 0;
+               color: var(--blood);
+               font-size: 0.85rem;
+               letter-spacing: 0.2em;
+           }
 
-  .themes {
-    margin: 0.5rem 0 0;
-    color: #6f6f7d;
-    font-size: 0.8rem;
-    letter-spacing: 0.14em;
-  }
+           .themes {
+               margin: 0.5rem 0 0;
+               color: #6f6f7d;
+               font-size: 0.8rem;
+               letter-spacing: 0.14em;
+           }
 
-  .lede {
-    max-width: 36rem;
-    margin: 2.5rem auto 0;
-    color: var(--body);
-    font-size: 1.05rem;
-  }
+           .lede {
+               max-width: 36rem;
+               margin: 2.5rem auto 0;
+               color: var(--body);
+               font-size: 1.05rem;
+           }
 
-  /* ---------- 正文 ---------- */
+           /* ---------- 正文 ---------- */
 
-  main {
-    max-width: 44rem;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-  }
+           main {
+               max-width: 44rem;
+               margin: 0 auto;
+               padding: 0 1.5rem;
+           }
 
-  section {
-    padding: 3.5rem 0;
-    border-bottom: 1px solid var(--line);
-  }
+           section {
+               padding: 3.5rem 0;
+               border-bottom: 1px solid var(--line);
+           }
 
-  h2 {
-    margin: 0 0 1.5rem;
-    color: var(--blood);
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-  }
+           h2 {
+               margin: 0 0 1.5rem;
+               color: var(--blood);
+               font-size: 1rem;
+               font-weight: 600;
+               letter-spacing: 0.16em;
+           }
 
-  p {
-    margin: 0 0 1.1rem;
-    color: var(--body);
-  }
+           p {
+               margin: 0 0 1.1rem;
+               color: var(--body);
+           }
 
-  p:last-child { margin-bottom: 0; }
+               p:last-child {
+                   margin-bottom: 0;
+               }
 
-  strong { color: var(--fg); }
+           strong {
+               color: var(--fg);
+           }
 
-  .quote-line {
-    margin: 1.5rem 0;
-    padding-left: 1.1rem;
-    border-left: 2px solid var(--blood);
-    color: #d6d6e2;
-  }
+           .quote-line {
+               margin: 1.5rem 0;
+               padding-left: 1.1rem;
+               border-left: 2px solid var(--blood);
+               color: #d6d6e2;
+           }
 
-  ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
+           ul {
+               margin: 0;
+               padding: 0;
+               list-style: none;
+           }
 
-  li {
-    margin-bottom: 1.1rem;
-    padding-left: 1.1rem;
-    color: var(--body);
-    border-left: 2px solid var(--line);
-  }
+           li {
+               margin-bottom: 1.1rem;
+               padding-left: 1.1rem;
+               color: var(--body);
+               border-left: 2px solid var(--line);
+           }
 
-  li:last-child { margin-bottom: 0; }
+               li:last-child {
+                   margin-bottom: 0;
+               }
 
-  li b {
-    color: var(--fg);
-    font-weight: 600;
-  }
+               li b {
+                   color: var(--fg);
+                   font-weight: 600;
+               }
 
-  /* ---------- 开场引言 ---------- */
+           /* ---------- 开场引言 ---------- */
 
-  .card {
-    margin: 0;
-    padding: 4.5rem 1.5rem;
-    border-bottom: 1px solid var(--line);
-  }
+           .card {
+               margin: 0;
+               padding: 4.5rem 1.5rem;
+               border-bottom: 1px solid var(--line);
+           }
 
-  .card-inner {
-    max-width: 44rem;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-  }
+           .card-inner {
+               max-width: 44rem;
+               margin: 0 auto;
+               padding: 0 1.5rem;
+           }
 
-  .card p {
-    margin: 0 0 1.25rem;
-    color: #d6d6e2;
-  }
+           .card p {
+               margin: 0 0 1.25rem;
+               color: #d6d6e2;
+           }
 
-  .card cite {
-    display: block;
-    color: #6f6f7d;
-    font-size: 0.8rem;
-    font-style: normal;
-    letter-spacing: 0.16em;
-  }
+           .card cite {
+               display: block;
+               color: #6f6f7d;
+               font-size: 0.8rem;
+               font-style: normal;
+               letter-spacing: 0.16em;
+           }
 
-  /* ---------- 页脚 ---------- */
+           /* ---------- 页脚 ---------- */
 
-  .site-footer {
-    padding: 3rem 1.5rem 4rem;
-    text-align: center;
-  }
+           .site-footer {
+               padding: 3rem 1.5rem 4rem;
+               text-align: center;
+           }
 
-  .site-footer a {
-    color: #6f6f7d;
-    font-size: 0.85rem;
-    letter-spacing: 0.14em;
-    text-decoration: none;
-  }
+               .site-footer a {
+                   color: #6f6f7d;
+                   font-size: 0.85rem;
+                   letter-spacing: 0.14em;
+                   text-decoration: none;
+               }
 
-  .site-footer a:hover { color: var(--blood); }
+                   .site-footer a:hover {
+                       color: var(--blood);
+                   }
 
-  @media (max-width: 480px) {
-    .hero { padding: 3.5rem 1.25rem 3rem; }
-    h1 { letter-spacing: 0.16em; text-indent: 0.16em; }
-    .card { padding: 3rem 0; }
-  }
-</style>
+           @media (max-width: 480px) {
+               .hero {
+                   padding: 3.5rem 1.25rem 3rem;
+               }
+
+               h1 {
+                   letter-spacing: 0.16em;
+                   text-indent: 0.16em;
+               }
+
+               .card {
+                   padding: 3rem 0;
+               }
+           }
+    </style>
+    <script data-goatcounter="https://trocarworks.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
 
