@@ -6,6 +6,9 @@
     <title>Peeper — 像素 3D 心理恐怖游戏</title>
     <meta name="description" content="Peeper 是一款像素 3D 心理恐怖游戏：越战尾声的美国，一名失忆的男人在宵禁的城市里，被一场无法解除的饥渴引向一间酒吧。">
     <link rel="preload" href="fonts/Uranus_Pixel_11Px.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <style>
            /* Uranus Pixel 11Px —— Peeper 游戏本体的 UI 字体，取自游戏工程
               Assets/fonts/Uranus_Pixel_11Px/，这里是原样副本，没有改动字形。
@@ -77,9 +80,15 @@
                max-width: 55vw;
                margin: 0 auto;
                filter: drop-shadow(0 0 48px rgba(179, 36, 42, 0.45));
-               /* 图标本身是不透明深灰底，用径向遮罩把方形边缘化开 */
-               -webkit-mask-image: radial-gradient(ellipse 64% 68% at 50% 50%, #000 34%, transparent 90%);
-               mask-image: radial-gradient(ellipse 64% 68% at 50% 50%, #000 34%, transparent 90%);
+               /* 图标是不透明方图，而且整张都是画（深色纹理一直铺到四边，没有
+                  可抠的"背景"），只能靠遮罩把方边化开。要点是羽化必须在画框
+                  **内侧**就归零：方形的"边"来自残留 alpha 到边界突然中断，而不是
+                  残留本身。原来 34%→90% 走到边界还剩两成 alpha，实测外圈偏差
+                  均值 1.9 级、峰值 9.8 级，方底就看得出来；改成 46%→78% 后为 0。
+                  注：死区是按比例缩的，这个尺寸（237px）下是 7px；缩到图标那种
+                  几十像素就得再收紧，见 tools/eye-favicon.py。 */
+               -webkit-mask-image: radial-gradient(ellipse 60% 54% at 50% 50%, #000 46%, rgba(0, 0, 0, 0.35) 64%, transparent 78%);
+               mask-image: radial-gradient(ellipse 60% 54% at 50% 50%, #000 46%, rgba(0, 0, 0, 0.35) 64%, transparent 78%);
            }
 
                .eye img {
@@ -243,13 +252,13 @@
                color: #d6d6e2;
            }
 
-           .card cite {
-               display: block;
-               color: #6f6f7d;
-               font-size: 0.8rem;
-               font-style: normal;
-               letter-spacing: 0.16em;
-           }
+        .card cite {
+            display: block;
+            color: #6f6f7d;
+            font-size: 14px;
+            font-style: normal;
+            letter-spacing: 2px;
+        }
 
            /* ---------- 页脚 ---------- */
 
