@@ -47,7 +47,20 @@
 
            body {
                margin: 0;
-               background: var(--bg);
+               /* 页面底纹：assets/img/bg.png 是一张很暗的像素纹理（灰阶 16~50，右侧和
+                  下方是血管状条纹）。不留 fixed，背景就跟着内容一起滚 —— 滚轮往下
+                  走是"展开"这张图的不同部分，而不是纹丝不动地钉在视口上。
+
+                  尺寸用 100% auto + repeat-y：宽度铺满、比例不失真，纵向不够就
+                  接着铺。这张图 473×648（比例 1:1.37），在 1240 宽下每屏 1698px
+                  左右，整页 6500px 会看到约 4 轮。想让它一张就盖满整页、不重复，
+                  素材大概要 1000×6500 这种比例。
+
+                  上面压的同色半透明层是必须的：素材比页面底色亮十几级，满强度
+                  铺上去右半边会变成一大团黑块。要更重/更轻改这个 alpha。 */
+               background:
+                   linear-gradient(rgba(11, 11, 13, 0.55), rgba(11, 11, 13, 0.55)),
+                   var(--bg) url("../assets/img/bg.png") center top / 100% auto repeat-y;
                color: var(--fg);
                font-family: "Uranus Pixel 11Px", system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
                font-size: 14px;      /* 1 × 14 */
@@ -65,11 +78,11 @@
 
            /* ---------- 首屏 ---------- */
 
-           .hero {
-               padding: 5rem 1.5rem 4rem;
-               text-align: center;
-               border-bottom: 1px solid var(--line);
-           }
+        .hero {
+            padding: 2rem 1.5rem 4rem;
+            text-align: center;
+            border-bottom: 1px solid var(--line);
+        }
 
            /* 眼睛拆成两层：底图（瞳孔已抹掉）+ 瞳孔层。两张图同为 237×237、
         共用同一像素网格，所以静止时严丝合缝，整层平移就是眼珠转动。
@@ -162,11 +175,20 @@
 
            /* ---------- 正文 ---------- */
 
+           /* 整页一条左轴：main 直接就是媒体栏宽度（56rem 内容 + 左右各 1.5rem 内边距），
+              h2、正文、图组、标签行全部从同一条左边缘起排 —— 原来正文是 44rem 居中、
+              媒体栏是往外扩的，两条左轴差 120px，标题看着像缩进了一截。
+              正文再用 max-width 收回 44rem 的阅读宽：左对齐而不是居中，所以左轴不散。 */
            main {
-               max-width: 44rem;
+               max-width: 59rem;
                margin: 0 auto;
                padding: 0 1.5rem;
            }
+
+               main > section > p,
+               main > section > .feature > p {
+                   max-width: 44rem;    /* 阅读宽，别跟着媒体栏一起变长 */
+               }
 
            section {
                padding: 3.5rem 0;
@@ -185,6 +207,10 @@
            p {
                margin: 0 0 1.1rem;
                color: var(--body);
+               /* 16px 不在 14px 网格上（网格上的下一档是 28px），笔画宽度会
+                  差一两像素；行高从 25px 收到 24px，比原来紧一点。 */
+               font-size: 16px;
+               line-height: 24px;
            }
 
                p:last-child {
@@ -233,6 +259,126 @@
                    font-weight: 600;
                }
 
+           /* ---------- 图文版式 ---------- */
+
+           /* 图、图组、特性行都占满 main 的整宽（= 媒体栏 56rem），与 h2、正文
+              共用同一条左轴，不再往外扩。 */
+           figure.media {
+               /* 必须写全 margin 简写：浏览器默认 figure 有 1em / 40px 外边距，
+                  只写 margin-block 的话左右那 40px 会留着，通栏图会被挤成 816
+                  宽并整体右移 40px。 */
+               margin: 0.75rem 0 3rem;
+           }
+
+               figure.media figcaption,
+               .step-label {
+                   margin: 0 0 0.75rem;
+                   color: var(--blood);
+                   font-size: 14px;         /* 1 × 14 */
+                   letter-spacing: 2px;
+               }
+
+               .media img,
+               .step-media img {
+                   display: block;
+                   width: 100%;
+                   height: auto;
+                   /* 特性行右边那张也框进 3:2，跟图组同一套尺寸规范（素材原始比例
+                      1.5~1.6 都接近 3:2，留边只有几个像素）。 */
+                   aspect-ratio: 3 / 2;
+                   object-fit: contain;
+                   /* 留边不给底色：页面有底纹了，涂一层纯色反而会露出一块比
+                      底纹略暗的方块。透明就地让底纹透上来。 */
+                   background: transparent;
+                   /* 页面大半是黑底截图，暗部会和背景粘成一片；一条极细的描边把图
+                      的边界框出来。像素风格不加圆角。 */
+                   border: 1px solid #25252c;
+               }
+
+           /* 特性行：左边编号 / 标题 / 说明，右边动图，比例照设计稿的 40 : 60 */
+           .step {
+               display: grid;
+               grid-template-columns: 40fr 60fr;
+               gap: 2.5rem;
+               align-items: center;
+               margin-block: 3.5rem;
+           }
+
+               .step:last-child {
+                   margin-block-end: 0;
+               }
+
+           figure.step-media {
+               margin: 0;               /* figure 默认带 1em / 40px 外边距 */
+           }
+
+           .step-title {
+               margin: 0;
+               color: var(--fg);
+               font-size: 28px;         /* 2 × 14 */
+               font-weight: 600;
+               line-height: 42px;       /* 21 × 2 */
+               letter-spacing: 4px;     /* 2 设计像素 */
+           }
+
+           .step-desc {
+               margin: 0.75rem 0 0;
+               color: var(--body);
+           }
+
+           /* 一个玩法条目：标签行 + 它的图组 */
+           .feature {
+               margin-block: 3.5rem;
+           }
+
+               .feature:last-child {
+                   margin-block-end: 0;
+               }
+
+           /* 条目标签行，沿用原来 li 的左侧竖线；左边缘与它的图组对齐 */
+           .lead {
+               margin-block: 0 0.75rem;
+               padding-left: 1.1rem;
+               color: var(--body);
+               border-left: 2px solid var(--line);
+           }
+
+               .lead b {
+                   color: var(--fg);
+                   font-weight: 600;
+               }
+
+           /* 图组：两列，一格宽 = (896 - 1.25rem) / 2，span-2 的图正好两格宽，
+              所以横向上跟上一行严丝合缝。
+
+              格子统一按 3:2 框住：素材原始比例从 1.09（Interact_1）到 1.77
+              （env_show_5）不等，不统一就会一行高一行矮。这里没有去重编码 gif
+              —— 动图重编码会掉画质、帧延时也可能变 —— 而是用 aspect-ratio 定框、
+              object-fit: contain 让图居中留边，留边填页面底色所以看不出来。
+              换图不用改任何东西，比例自动适配。 */
+           .grid-2 {
+               display: grid;
+               grid-template-columns: 1fr 1fr;
+               gap: 1.25rem;
+           }
+
+               .grid-2 figure {
+                   margin: 0;
+               }
+
+               .grid-2 .span-2 {
+                   grid-column: span 2;
+               }
+
+               .grid-2 img {
+                   display: block;
+                   width: 100%;
+                   aspect-ratio: 3 / 2;
+                   object-fit: contain;
+                   background: transparent;
+                   border: 1px solid #25252c;
+               }
+
            /* ---------- 开场引言 ---------- */
 
            .card {
@@ -251,7 +397,42 @@
                margin: 0 0 1.25rem;
                color: #d6d6e2;
            }
+        .hero-frame {
+            position: relative;
+            max-width: 36rem;
+            margin: 1.5rem auto 0;
+            padding: 0.75rem;
+            border: 1px solid #25252c;
+        }
 
+            .hero-frame::before,
+            .hero-frame::after {
+                content: "";
+                position: absolute;
+                width: 14px;
+                height: 14px;
+                border: 2px solid var(--blood);
+            }
+
+            .hero-frame::before {
+                top: -2px;
+                left: -2px;
+                border-right: none;
+                border-bottom: none;
+            }
+
+            .hero-frame::after {
+                right: -2px;
+                bottom: -2px;
+                border-left: none;
+                border-top: none;
+            }
+
+            .hero-frame img {
+                display: block;
+                width: 100%;
+                height: auto;
+            }
         .card cite {
             display: block;
             color: #6f6f7d;
@@ -278,10 +459,29 @@
                        color: var(--blood);
                    }
 
-           @media (max-width: 480px) {
-               .hero {
-                   padding: 3.5rem 1.25rem 3rem;
+           /* 窄屏：媒体栏跟着 main 一起缩（不再有单独的档位），752px 以下特性行
+              改上下叠、图组改单列。 */
+           @media (max-width: 47rem) {
+               .step {
+                   grid-template-columns: 1fr;
+                   gap: 1.25rem;
+                   align-items: start;
                }
+
+               /* 窄屏两列会小到看不清像素，改单列 */
+               .grid-2 {
+                   grid-template-columns: 1fr;
+               }
+
+                   .grid-2 .span-2 {
+                       grid-column: auto;
+                   }
+           }
+
+           @media (max-width: 480px) {
+            .hero {
+                padding: 1.5rem 1.25rem 3rem;
+            }
 
                /* 原来这里把 h1 字距收紧成 0.16em，现在由 h1 的基础规则
                   （42px / 6px 字距）负责这一档，效果一致。 */
@@ -296,16 +496,19 @@
 </head>
 <body>
 
-<header class="hero">
-  <div class="eye" role="img" aria-label="Peeper 的标志：一只流着血泪的像素红眼，瞳孔会跟着鼠标转">
-    <img src="eye-base.png" width="237" height="237" alt="">
-    <img class="eye-pupil" src="eye-pupil.png" width="237" height="237" alt="">
-  </div>
-  <h1>PEEPER</h1>
-  <p class="tagline">像素 · 3D · 俯视角 · 心理恐怖</p>
-  <p class="themes">邪教 · 祭祀 · 阴谋</p>
-  <p class="lede">就在越战的阴影尚未从美国褪去之时，阴暗的城市深处里，邪恶正悄然滋长。</p>
-</header>
+    <header class="hero">
+        <div class="eye" role="img" aria-label="Peeper 的标志：一只流着血泪的像素红眼，瞳孔会跟着鼠标转">
+            <img src="eye-base.png" width="237" height="237" alt="">
+            <img class="eye-pupil" src="eye-pupil.png" width="237" height="237" alt="">
+        </div>
+        <h1>PEEPER</h1>
+        <p class="tagline">像素 · 3D · 俯视角 · 心理恐怖</p>
+        <p class="themes">邪教 · 祭祀 · 阴谋</p>
+        <p class="lede">就在越战的阴影尚未从美国褪去之时，阴暗的城市深处里，邪恶正悄然滋长。</p>
+        <figure class="hero-frame">
+            <img src="../assets/gif/altar_dark.gif" alt="雨夜小巷动图">
+        </figure>
+    </header>
 
 <main>
 
@@ -319,68 +522,129 @@
     <section>
         <h2>特化的3D像素化效果</h2>
         <p>游戏中的整个 3D 世界都以精心设计的像素化风格呈现。</p>
-        <div style="text-align: center;">
-            <img src="../assets/gif/main_street.gif" alt="雨夜小巷动图" style="max-width: 100%; height: auto;">
+
+        <figure class="media">
+            <figcaption class="step-label">01 / 总体渲染</figcaption>
+            <img src="../assets/gif/main_street.gif" width="1141" height="616"
+                 alt="雨夜街巷的像素 3D 场景，霓虹招牌与路面积水" loading="lazy">
+        </figure>
+
+        <div class="step">
+            <div class="step-text">
+                <p class="step-label">02 / 移动</p>
+                <h3 class="step-title">移动中的像素世界</h3>
+                <p class="step-desc">游戏采用固定正交斜俯视角，类似老《暗黑破坏神》、老《博德之门》等经典作品</p>
+            </div>
+            <figure class="step-media">
+                <img src="../assets/gif/move_street.gif" width="720" height="480"
+                     alt="角色在街巷中移动，像素随移动对齐网格" loading="lazy">
+            </figure>
         </div>
-        <p>游戏采用固定正交斜俯视角，类似老《暗黑破坏神》、老《博德之门》等经典作品</p>
-        <div style="text-align: center;">
-            <img src="../assets/gif/move_street.gif" alt="雨夜小巷动图" style="max-width: 100%; height: auto;">
+
+        <div class="step">
+            <div class="step-text">
+                <p class="step-label">03 / 室内</p>
+                <h3 class="step-title">室内外两种渲染</h3>
+                <p class="step-desc">室内外用不同策略渲染，使得室内的复古感更加强烈。</p>
+            </div>
+            <figure class="step-media">
+                <img src="../assets/gif/inside_building_1.gif" width="560" height="351"
+                     alt="室内场景，采用与室外不同的渲染策略" loading="lazy">
+            </figure>
         </div>
-        <p>室内外用不同策略渲染，使得室内的复古感更加强烈。</p>
-        <div style="text-align: center;">
-            <img src="../assets/gif/inside_building_1.gif" alt="雨夜小巷动图" style="max-width: 100%; height: auto;">
-        </div>
-        <p>保留像素3D世界空间复古感的同时，使用大量现代图形技术呈现出极致的视觉风格。</p>
-        <div style="text-align: center;">
-            <img src="../assets/gif/tech_1.gif" alt="雨夜小巷动图" style="max-width: 100%; height: auto;">
+
+        <div class="step">
+            <div class="step-text">
+                <p class="step-label">04 / 图形技术</p>
+                <h3 class="step-title">复古像素与现代图形</h3>
+                <p class="step-desc">保留像素3D世界空间复古感的同时，使用大量现代图形技术呈现出极致的视觉风格。</p>
+            </div>
+            <figure class="step-media">
+                <img src="../assets/gif/tech_1.gif" width="720" height="480"
+                     alt="现代图形技术在像素画面中的表现" loading="lazy">
+            </figure>
         </div>
     </section>
 
   <section>
     <h2>玩法&系统</h2>
-    <ul>
-        <li><b>探索</b>—— 在俯视角摄像头下移动探索的诡异社区。</li>
-        <div style="text-align: center;">
-            <img src="../assets/gif/Interact_3.gif" alt="雨夜小巷动图" style="max-width: 100%; height: auto;">
+    <div class="feature">
+        <p class="lead"><b>探索</b>—— 在俯视角摄像头下移动探索的诡异社区。</p>
+        <div class="media grid-2">
+            <figure class="span-2">
+                <img src="../assets/gif/Interact_3.gif" width="720" height="480"
+                     alt="俯视角下在社区里移动探索" loading="lazy">
+            </figure>
         </div>
-        <li><b>检视</b>—— 近距离观察一幅画或一个物品，也许线索就在其中。</li>
-        <div style="text-align: center;">
-            <img src="../assets/gif/Interact_1.gif" alt="雨夜小巷动图" style="max-width: 100%; height: auto;">
+    </div>
+
+    <div class="feature">
+        <p class="lead"><b>检视</b>—— 近距离观察一幅画或一个物品，也许线索就在其中。</p>
+        <div class="media grid-2">
+            <figure>
+                <img src="../assets/gif/Interact_1.gif" width="698" height="638"
+                     alt="近距离检视墙上的一幅画" loading="lazy">
+            </figure>
+            <figure>
+                <img src="../assets/gif/item_check.gif" width="699" height="438"
+                     alt="物品检视界面，画面下方带操作提示" loading="lazy">
+            </figure>
         </div>
-        <div style="text-align: center;">
-            <img src="../assets/gif/item_check.gif" alt="雨夜小巷动图" style="max-width: 100%; height: auto;">
+    </div>
+
+    <div class="feature">
+        <p class="lead"><b>对话</b>—— 一句句对话，挖掘那些被隐藏起来的秘密。</p>
+        <div class="media grid-2">
+            <figure>
+                <img src="../assets/gif/talk_1.gif" width="720" height="480"
+                     alt="与角色对话的场景" loading="lazy">
+            </figure>
+            <figure>
+                <img src="../assets/gif/Interact_2.gif" width="699" height="486"
+                     alt="场景中的交互提示" loading="lazy">
+            </figure>
         </div>
-        <li><b>对话</b>—— 一句句对话，挖掘那些被隐藏起来的秘密。</li>
-        <div style="text-align: center;">
-            <img src="../assets/gif/talk_1.gif" alt="雨夜小巷动图" style="max-width: 100%; height: auto;">
+    </div>
+
+    <div class="feature">
+        <p class="lead"><b>解谜</b>—— 通过解谜，逐步推进让诡异街区的真面目浮出水面。</p>
+        <div class="media grid-2">
+            <figure>
+                <img src="../assets/gif/puzzle_1.gif" width="699" height="438"
+                     alt="解谜：需要拨号的机关" loading="lazy">
+            </figure>
+            <figure>
+                <img src="../assets/gif/puzzle_2.gif" width="699" height="438"
+                     alt="解谜：桌上的酒瓶与蜡烛" loading="lazy">
+            </figure>
         </div>
-        <div style="text-align: center;">
-            <img src="../assets/gif/Interact_2.gif" alt="雨夜小巷动图" style="max-width: 100%; height: auto;">
+    </div>
+
+    <div class="feature">
+        <p class="lead"><b>氛围</b>—— 以越战末期的美国为时代背景，探索兼具鲜明年代特征与恐怖诡异氛围的场景。</p>
+        <div class="media grid-2">
+            <figure>
+                <img src="../assets/img/env_show_1.png" width="907" height="574"
+                     alt="场景展示：雨夜中的街边房屋" loading="lazy">
+            </figure>
+            <figure>
+                <img src="../assets/img/env_show_2.png" width="591" height="511"
+                     alt="场景展示：室内房间的等距视角" loading="lazy">
+            </figure>
+            <figure>
+                <img src="../assets/img/env_show_3.png" width="826" height="590"
+                     alt="场景展示：另一处室内房间" loading="lazy">
+            </figure>
+            <figure>
+                <img src="../assets/img/env_show_4.png" width="650" height="449"
+                     alt="场景展示：室内陈设" loading="lazy">
+            </figure>
+            <figure class="span-2">
+                <img src="../assets/img/env_show_5.png" width="1084" height="611"
+                     alt="场景展示：整条街区" loading="lazy">
+            </figure>
         </div>
-        <li><b>解谜</b>—— 通过解谜，逐步推进让诡异街区的真面目浮出水面。</li>
-        <div style="text-align: center;">
-            <img src="../assets/gif/puzzle_1.gif" alt="雨夜小巷动图" style="max-width: 100%; height: auto;">
-        </div>
-        <div style="text-align: center;">
-            <img src="../assets/gif/puzzle_2.gif" alt="雨夜小巷动图" style="max-width: 100%; height: auto;">
-        </div>
-        <li><b>氛围</b>—— 以越战末期的美国为时代背景，探索兼具鲜明年代特征与恐怖诡异氛围的场景。</li>
-        <div style="text-align: center;">
-            <img src="../assets/img/env_show_1.png" alt="雨夜小巷动图" style="max-width: 100%; height: auto;">
-        </div>
-        <div style="text-align: center;">
-            <img src="../assets/img/env_show_2.png" alt="雨夜小巷动图" style="max-width: 100%; height: auto;">
-        </div>
-        <div style="text-align: center;">
-            <img src="../assets/img/env_show_3.png" alt="雨夜小巷动图" style="max-width: 100%; height: auto;">
-        </div>
-        <div style="text-align: center;">
-            <img src="../assets/img/env_show_4.png" alt="雨夜小巷动图" style="max-width: 100%; height: auto;">
-        </div>
-        <div style="text-align: center;">
-            <img src="../assets/img/env_show_5.png" alt="雨夜小巷动图" style="max-width: 100%; height: auto;">
-        </div>
-    </ul>
+    </div>
   </section>
 
 </main>
