@@ -1,0 +1,371 @@
+/* Peeper 页专属样式（配合 base.css） */
+
+/* 页面专属 token（共有变量在 base.css） */
+:root {
+    --fg: #e8e8ee;
+}
+
+/* body 特有：整页底纹。bg.png 的相对路径按本 css 文件位置解析，
+无论页面在 /zh/ 还是 /zh/peeper/ 都指向同一份文件。 */
+body {
+    background: linear-gradient(rgba(11, 11, 13, 0.55), rgba(11, 11, 13, 0.55)), var(--bg) url("../peeper/bg.png") center top / 100% auto repeat-y;
+}
+
+/* ---------- 首屏 ---------- */
+.hero {
+    padding: 2rem 1.5rem 4rem;
+    text-align: center;
+    border-bottom: 1px solid var(--line);
+}
+
+.eye {
+    position: relative;
+    width: 237px;
+    max-width: 55vw;
+    margin: 0 auto;
+    filter: drop-shadow(0 0 48px rgba(179, 36, 42, 0.45));
+    -webkit-mask-image: radial-gradient(ellipse 60% 54% at 50% 50%, #000 46%, rgba(0, 0, 0, 0.35) 64%, transparent 78%);
+    mask-image: radial-gradient(ellipse 60% 54% at 50% 50%, #000 46%, rgba(0, 0, 0, 0.35) 64%, transparent 78%);
+}
+
+.eye img {
+    display: block;
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+}
+
+.eye-pupil {
+    position: absolute;
+    top: 0;
+    left: 0;
+    will-change: transform;
+}
+
+h1 {
+    margin: 1.75rem 0 0;
+    font-size: 42px; /* 3 × 14 */
+    font-weight: 700;
+    line-height: 45px;
+    letter-spacing: 6px;
+    text-indent: 6px;
+}
+
+@media (min-width: 480px) {
+    h1 {
+        font-size: 56px;
+        line-height: 60px;
+        letter-spacing: 12px;
+        text-indent: 12px;
+    }
+}
+
+@media (min-width: 640px) {
+    h1 {
+        font-size: 70px;
+        line-height: 75px;
+        letter-spacing: 15px;
+        text-indent: 15px;
+    }
+}
+
+.tagline {
+    margin: 1.25rem 0 0;
+    color: var(--blood);
+    font-size: 14px;
+    letter-spacing: 3px;
+}
+
+.themes {
+    margin: 0.5rem 0 0;
+    color: #6f6f7d;
+    font-size: 14px;
+    letter-spacing: 2px;
+}
+
+.lede {
+    max-width: 36rem;
+    margin: 2.5rem auto 0;
+    color: var(--body);
+    font-size: 14px;
+}
+
+/* ---------- 正文 ---------- */
+main {
+    max-width: 59rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+main > section > p, main > section > .feature > p {
+    max-width: 44rem;
+}
+
+section {
+    padding: 3.5rem 0;
+    border-bottom: 1px solid var(--line);
+}
+
+h2 {
+    margin: 0 0 1.5rem;
+    color: var(--blood);
+    font-size: 28px; /* 2 × 14 */
+    font-weight: 600;
+    line-height: 42px;
+    letter-spacing: 4px;
+}
+
+p {
+    margin: 0 0 1.1rem;
+    color: var(--body);
+    font-size: 16px;
+    line-height: 24px;
+}
+
+p:last-child {
+    margin-bottom: 0;
+}
+
+strong {
+    color: var(--fg);
+}
+
+cite {
+    font-style: normal;
+}
+
+.quote-line {
+    margin: 1.5rem 0;
+    padding-left: 1.1rem;
+    border-left: 2px solid var(--blood);
+    color: #d6d6e2;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+li {
+    margin-bottom: 1.1rem;
+    padding-left: 1.1rem;
+    color: var(--body);
+    border-left: 2px solid var(--line);
+}
+
+li:last-child {
+    margin-bottom: 0;
+}
+
+li b {
+    color: var(--fg);
+    font-weight: 600;
+}
+
+/* ---------- 图文版式 ---------- */
+figure.media {
+    margin: 0.75rem 0 3rem;
+}
+
+figure.media figcaption, .step-label {
+    margin: 0 0 0.75rem;
+    color: var(--blood);
+    font-size: 14px;
+    letter-spacing: 2px;
+}
+
+.media img, .step-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: contain;
+    background: transparent;
+    border: 1px solid #25252c;
+}
+
+.step {
+    display: grid;
+    grid-template-columns: 40fr 60fr;
+    gap: 2.5rem;
+    align-items: center;
+    margin-block: 3.5rem;
+}
+
+.step:last-child {
+    margin-block-end: 0;
+}
+
+figure.step-media {
+    margin: 0;
+}
+
+.step-title {
+    margin: 0;
+    color: var(--fg);
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 42px;
+    letter-spacing: 4px;
+}
+
+.step-desc {
+    margin: 0.75rem 0 0;
+    color: var(--body);
+}
+
+.feature {
+    margin-block: 3.5rem;
+}
+
+.feature:last-child {
+    margin-block-end: 0;
+}
+
+.lead {
+    margin-block: 0 0.75rem;
+    padding-left: 1.1rem;
+    color: var(--body);
+    border-left: 2px solid var(--line);
+}
+
+.lead b {
+    color: var(--fg);
+    font-weight: 600;
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+
+.grid-2 figure {
+    margin: 0;
+}
+
+.grid-2 .span-2 {
+    grid-column: span 2;
+}
+
+.grid-2 img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: contain;
+    background: transparent;
+    border: 1px solid #25252c;
+}
+
+/* ---------- 开场引言 ---------- */
+.card {
+    margin: 0;
+    padding: 4.5rem 1.5rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.card-inner {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.card p {
+    margin: 0 0 1.25rem;
+    color: #d6d6e2;
+}
+
+.hero-frame {
+    position: relative;
+    max-width: 36rem;
+    margin: 1.5rem auto 0;
+    padding: 0.75rem;
+    border: 1px solid #25252c;
+}
+
+.hero-frame::before, .hero-frame::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--blood);
+}
+
+.hero-frame::before {
+    top: -2px;
+    left: -2px;
+    border-right: none;
+    border-bottom: none;
+}
+
+.hero-frame::after {
+    right: -2px;
+    bottom: -2px;
+    border-left: none;
+    border-top: none;
+}
+
+.hero-frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.card cite {
+    display: block;
+    color: #6f6f7d;
+    font-size: 14px;
+    font-style: normal;
+    letter-spacing: 2px;
+}
+
+/* ---------- 页脚 ---------- */
+.site-footer {
+    padding: 3rem 1.5rem 4rem;
+    text-align: center;
+}
+
+.site-footer a {
+    color: #6f6f7d;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-decoration: none;
+}
+
+.site-footer a:hover {
+    color: var(--blood);
+}
+
+/* 窄屏 */
+@media (max-width: 47rem) {
+    .step {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+        align-items: start;
+    }
+
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .grid-2 .span-2 {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        padding: 1.5rem 1.25rem 3rem;
+    }
+
+    .card {
+        padding: 3rem 0;
+    }
+
+    .lang-switch {
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+}
+

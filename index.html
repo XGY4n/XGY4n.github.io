@@ -3,26 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="google-site-verification" content="JdABJlmAXZ-i6PyS3YtTHiuFWlT9FehHPzNywDjufh8">
 <title>TROCAR Works</title>
 <meta name="robots" content="noindex">
-<meta http-equiv="refresh" content="1; url=index-en.html">
+<meta http-equiv="refresh" content="1; url=en/">
 <script>
-    /* 语言入口：上次手动选过的优先；否则按浏览器语言，zh 开头进中文版，其余进英文版。
-       拆分页顶部的 EN/中文 按钮会把选择写进 localStorage("trocar-lang")，这里读它。 */
+    /* 语言入口：手动选过（localStorage "trocar-lang" = zh|en）优先；
+       否则看浏览器语言，zh 开头进 /zh/，其余进 /en/。禁用 JS 时由 meta refresh
+       落到英文页。各语言页右上角的切换链接会把选择写回这个键。 */
     (function () {
         var l = '';
         try { l = localStorage.getItem('trocar-lang') || ''; } catch (e) { }
-        if (l !== 'cn' && l !== 'en') {
+        if (l !== 'zh' && l !== 'en') {
             var b = (navigator.languages && navigator.languages[0]) || navigator.language || '';
-            l = /^zh/i.test(b) ? 'cn' : 'en';
+            l = /^zh/i.test(b) ? 'zh' : 'en';
         }
-        location.replace('index-' + l + '.html');
+        location.replace(l + '/');
     })();
 </script>
 </head>
 <body>
-    <noscript>
-        <a href="index-en.html">English</a> / <a href="index-cn.html">中文</a>
-    </noscript>
+<noscript>
+    <a href="en/">English</a> / <a href="zh/">中文</a>
+</noscript>
 </body>
 </html>

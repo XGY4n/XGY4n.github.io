@@ -9,8 +9,8 @@ eye.png 是一张不透明方图，整张都是画（深色纹理一直铺到四
     边突然中断"，归零之后方形轮廓就不存在了；
   * 辉光是给小尺寸用的：16px 下瞳孔细节全糊，只剩这团红光能认出是那只眼睛。
 
-FADE 的数值必须和 Peeper/index-cn.html / index-en.html 里 .eye 的 mask-image
-保持一致，三处一起改。
+FADE 的数值必须和 assets/css/peeper.css 里 .eye 的 mask-image 保持一致，
+两处一起改。
 
     python tools/eye-favicon.py
 """

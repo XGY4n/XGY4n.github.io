@@ -1,0 +1,87 @@
+/* ---------- 全站基座：像素字体、重置、双页共有的组件 ---------- */
+
+/* Uranus Pixel 11Px —— Peeper 游戏本体的 UI 字体，取自游戏工程
+Assets/fonts/Uranus_Pixel_11Px/，这里是原样副本，没有改动字形。
+
+排这个字体前先量过：名字里的 11Px 指的是 ascent（实测 11.20），
+而 em 画在 14 像素的网格上（1024 单位/em，网格步长 1024/14）。
+所以字号取 14 的整数倍时，每个设计像素才正好等于整数个屏幕
+像素，笔画是锐的；取别的值会被拉伸成非整数倍，中文笔画就糊了。
+首页与 Peeper 页共用这一套规矩。 */
+@font-face {
+    font-family: "Uranus Pixel 11Px";
+    src: url("../fonts/Uranus_Pixel_11Px.woff2") format("woff2"),
+    url("../fonts/Uranus_Pixel_11Px.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* 两页一致的设计变量；--fg 与各页专有 token 在 root.css / peeper.css 补 */
+:root {
+    color-scheme: dark;
+    --bg: #0b0b0d;
+    --body: #b9b9c6;
+    --line: #1e1e23;
+    --blood: #b3242a;
+}
+
+* {
+box-sizing: border-box;
+}
+
+html {
+    background: var(--bg);
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: "Uranus Pixel 11Px", system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    font-size: 14px; /* 1 × 14 */
+    line-height: 25px;
+    /* 像素字体三件套：字距调整、连字、字形合成都会把字形挪到非整数位置
+    或把轮廓拉宽，边缘就糊了，必须关掉。本字体只有 regular 一个字重，
+    font-synthesis:none 会让加粗不再触发浏览器合成粗体，改由颜色区分层级。 */
+    font-kerning: none;
+    font-variant-ligatures: none;
+    font-synthesis: none;
+    text-rendering: geometricPrecision;
+    -webkit-font-smoothing: none;
+}
+
+/* ---------- 语言切换（两页右上角同款） ---------- */
+.lang-switch {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 50;
+    display: flex;
+    background: rgba(11, 11, 13, 0.78);
+    border: 1px solid var(--line);
+}
+
+.lang-switch a {
+    text-decoration: none;
+    color: var(--body);
+    padding: 6px 12px;
+    font: inherit;
+    font-size: 14px; /* 1 × 14 */
+    line-height: 14px;
+    letter-spacing: 2px;
+}
+
+.lang-switch a + a {
+    border-left: 1px solid var(--line);
+}
+
+.lang-switch a[aria-current="page"] {
+    background: var(--blood);
+    color: var(--fg);
+}
+
+.lang-switch a:hover:not([aria-current="page"]) {
+    color: var(--fg);
+}
+
