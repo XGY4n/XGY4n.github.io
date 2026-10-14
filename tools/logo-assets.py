@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-"""从 assets/src/logo-src.jpg 派生站点用的 logo 素材。
+"""从 assets/brand/src/logo-src.jpg 派生站点用的 logo 素材。
 
 源图是一张 1024×1024 的 JPEG：深墨色的套管针 + 烘焙在右下角的
 trocarworks 字标，铺在米白纸面上。网页是深色底，直接用会带一块
 亮方块，所以这里把纸面抠成透明、笔画改成米白（品牌反白）。
 
-产出（全部写回 assets/）：
-    logo-lockup.png     首屏品牌锁定图，透明底 + 米白笔画
-    favicon-32/64.png   奶油底 + 墨色管身（浏览器标签栏深浅色都看得清）
-    apple-touch-icon.png 同上，180px 不预圆角（iOS 自己会裁）
-    og-image.png        1200×630 分享图，深底 + 米白锁定图 + 像素字标语
+产出：
+    assets/brand/logo-lockup.png        首屏品牌锁定图，透明底 + 米白笔画
+    assets/brand/og-image.png           1200×630 分享图，深底 + 米白锁定图 + 像素字标语
+    assets/icons/favicon-32/64.png      奶油底 + 墨色管身（标签栏深浅色都看得清）
+    assets/icons/apple-touch-icon.png   同上，180px 不预圆角（iOS 自己会裁）
 
 抠底原理：纸面与笔画的亮度差很大（实测 240 vs 35），用亮度当 alpha
 反算，再用 smoothstep 掐掉纸面噪点和 JPEG 块状纹理；字标与器械在源图
@@ -25,9 +25,10 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = os.path.join(ROOT, "assets", "src", "logo-src.jpg")
-OUT = os.path.join(ROOT, "assets")
-FONT = os.path.join(ROOT, "Peeper", "fonts", "Uranus_Pixel_11Px.ttf")
+SRC = os.path.join(ROOT, "assets", "brand", "src", "logo-src.jpg")
+BRAND = os.path.join(ROOT, "assets", "brand")
+ICONS = os.path.join(ROOT, "assets", "icons")
+FONT = os.path.join(ROOT, "assets", "fonts", "Uranus_Pixel_11Px.ttf")
 
 CREAM = (239, 233, 219)      # 品牌纸面米白
 INK = (43, 53, 54)           # 品牌笔画墨色
@@ -164,10 +165,10 @@ def main():
     ys, xs = np.nonzero(body_alpha > 40)
     body = body.crop((xs.min(), ys.min(), xs.max() + 1, ys.max() + 1))
 
-    lockup.save(os.path.join(OUT, "logo-lockup.png"), optimize=True)
-    tile(body, 32, CREAM, INK, 0.92, 0.22).save(os.path.join(OUT, "favicon-32.png"), optimize=True)
-    tile(body, 64, CREAM, INK, 0.90, 0.22).save(os.path.join(OUT, "favicon-64.png"), optimize=True)
-    tile(body, 180, CREAM, INK, 0.74, 0.0).save(os.path.join(OUT, "apple-touch-icon.png"), optimize=True)
+    lockup.save(os.path.join(BRAND, "logo-lockup.png"), optimize=True)
+    tile(body, 32, CREAM, INK, 0.92, 0.22).save(os.path.join(ICONS, "favicon-32.png"), optimize=True)
+    tile(body, 64, CREAM, INK, 0.90, 0.22).save(os.path.join(ICONS, "favicon-64.png"), optimize=True)
+    tile(body, 180, CREAM, INK, 0.74, 0.0).save(os.path.join(ICONS, "apple-touch-icon.png"), optimize=True)
 
     # og 分享图：逻辑稿 400×210 排完再 3x 整数放大，
     # 像素字才不会像 PIL 直接渲染大字那样被抗锯齿糊掉。
@@ -184,10 +185,10 @@ def main():
     for c, cw in zip(text, widths):
         draw.text((x, 182), c, font=font, fill=CREAM)
         x += cw + spacing
-    og.resize((W, H), Image.NEAREST).save(os.path.join(OUT, "og-image.png"), optimize=True)
+    og.resize((W, H), Image.NEAREST).save(os.path.join(BRAND, "og-image.png"), optimize=True)
 
     print("logo-lockup.png %s" % (lockup.size,))
-    print("favicon / apple-touch-icon / og-image 已更新")
+    print("assets/brand + assets/icons 已更新")
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""从 Peeper/eye.png 派生浏览器标签页图标。
+"""从 assets/peeper/eye.png 派生 Peeper 页的浏览器标签页图标。
 
 eye.png 是一张不透明方图，整张都是画（深色纹理一直铺到四边，没有可抠的
 "背景"），所以直接拿来当图标就是一块深色方砖。这里把页面那套径向羽化
@@ -9,8 +9,8 @@ eye.png 是一张不透明方图，整张都是画（深色纹理一直铺到四
     边突然中断"，归零之后方形轮廓就不存在了；
   * 辉光是给小尺寸用的：16px 下瞳孔细节全糊，只剩这团红光能认出是那只眼睛。
 
-FADE 的数值必须和 Peeper/index.html 里 .eye 的 mask-image 保持一致，
-两处一起改。
+FADE 的数值必须和 Peeper/index-cn.html / index-en.html 里 .eye 的 mask-image
+保持一致，三处一起改。
 
     python tools/eye-favicon.py
 """
@@ -21,8 +21,8 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-EYE = os.path.join(ROOT, "Peeper", "eye.png")
-OUT_DIR = os.path.join(ROOT, "Peeper")
+EYE = os.path.join(ROOT, "assets", "peeper", "eye.png")
+OUT_DIR = os.path.join(ROOT, "assets", "icons")
 BG = (11, 11, 13)          # 站点 --bg，苹果图标铺底用
 
 N = 237                    # eye.png 边长
@@ -81,10 +81,10 @@ def render(size, opaque_bg=None, box=0.94, glow_r=0.40, glow_blur=0.028):
 
 def main():
     for size in (32, 64):
-        render(size).save(os.path.join(OUT_DIR, "favicon-%d.png" % size), optimize=True)
+        render(size).save(os.path.join(OUT_DIR, "peeper-favicon-%d.png" % size), optimize=True)
     # 苹果图标不透明（iOS 会把透明处填黑），铺站点底色，跟首屏一个观感
     render(180, opaque_bg=BG, box=0.86).save(
-        os.path.join(OUT_DIR, "apple-touch-icon.png"), optimize=True)
+        os.path.join(OUT_DIR, "peeper-apple-touch-icon.png"), optimize=True)
 
     # 自检：外圈 3px 的 alpha 要接近 0 —— 几十就说明方底又回来了
     for size in (32, 64):
@@ -93,7 +93,7 @@ def main():
                                a[:, :3].reshape(-1, 4), a[:, -3:].reshape(-1, 4)])
         assert ring[:, 3].max() <= 8, "favicon 外圈 alpha 残留 %d，方底可能又出来了" % ring[:, 3].max()
         print("  %dpx 外圈 alpha 峰值 %d/255" % (size, ring[:, 3].max()))
-    print("favicon-32.png / favicon-64.png / apple-touch-icon.png 已更新")
+    print("assets/icons/peeper-favicon-32/64.png + peeper-apple-touch-icon.png 已更新")
 
 
 if __name__ == "__main__":

@@ -9,18 +9,38 @@ TROCAR Works 静态站点，托管于 GitHub Pages，域名 `https://trocarworks
 ## 结构
 
 ```
-index.html            工作室首页（品牌 / 作品列表）
-Peeper/index.html     Peeper 游戏页
-Peeper/favicon-*.png  Peeper 自己的标签页图标（用那只眼睛做的，无方底）
-assets/               logo 派生素材（首屏锁定图、favicon、og 分享图）
-assets/src/           logo 源图
-fonts/                站点用的像素字体（Peeper 游戏字体的副本）
-tools/logo-assets.py  从 assets/src/logo-src.jpg 重新生成 assets/ 里的素材
-tools/eye-favicon.py  从 Peeper/eye.png 重新生成 Peeper 的标签页图标
+index.html            首页入口（语言跳转壳，见下）
+index-cn.html         工作室首页 · 中文
+index-en.html         工作室首页 · English
+Peeper/index.html     Peeper 页入口（语言跳转壳）
+Peeper/index-cn.html  Peeper 游戏页 · 中文
+Peeper/index-en.html  Peeper 游戏页 · English
+assets/
+├── fonts/            像素字体 Uranus_Pixel_11Px（整站唯一一份，两个页面共用）
+├── icons/            标签页图标：首页用 favicon-*.png，Peeper 用 peeper- 前缀
+├── brand/            首页品牌素材（logo 锁定图、og 分享图、src/ 为 logo 源图）
+└── peeper/           Peeper 页的全部素材：眼睛美术、游戏 gif、场景 png、背景纹理
+tools/
+├── logo-assets.py    从 assets/brand/src/logo-src.jpg 重生成 brand + icons 里首页那组
+└── eye-favicon.py    从 assets/peeper/eye.png 重生成 icons 里 peeper- 前缀那组
 ```
 
+约定：**目录里只放 html，二进制素材一律进 `assets/` 按用途分组**；文件名全小写
+（GitHub Pages 的 URL 大小写敏感）。
+
+## 多语言
+
+每个页面拆成 `index-cn.html` / `index-en.html` 两份**完全独立**的文件，
+`index.html` 是跳转壳：优先读 `localStorage("trocar-lang")`（右上角切换时写入），
+没有记录就看浏览器语言（`zh*` → 中文，其余 → 英文），兜底英文；禁用 JS 时
+`meta refresh` 1 秒后落英文页并给出手动链接。
+
+**分发就用语言后缀的固定链接**（如 `trocarworks.site/Peeper/index-en.html`），
+`/` 与 `/Peeper/` 短链自动分流。两份文件互不引用、无共享脚本，
+**改任何一份文案/版式记得同步另一份**（含 canonical / og / hreflang 里的语言后缀）。
+
 首页与 Peeper 页共用同一套排版规矩：字号取 14 的整数倍，行高与字距取该档倍数的
-整数倍，理由见 `Peeper/index.html` 顶部的注释。
+整数倍，理由见 `Peeper/index-cn.html` 顶部的注释。
 
 ## 本地预览
 
@@ -35,7 +55,7 @@ python -m http.server 8000
 
 ## 换 logo
 
-把新图覆盖到 `assets/src/logo-src.jpg`，然后：
+把新图覆盖到 `assets/brand/src/logo-src.jpg`，然后：
 
 ```sh
 python tools/logo-assets.py
