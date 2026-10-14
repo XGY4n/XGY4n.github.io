@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 只列四个内容页。根 / 与 /Peeper/ 是 noindex 跳转壳，不进 sitemap；
+     hreflang 三件套与各页 <head> 里的声明逐字一致（含 x-default 指向跳转壳）。 -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://trocarworks.site/zh/</loc>
+    <lastmod>2026-10-15</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://trocarworks.site/zh/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://trocarworks.site/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://trocarworks.site/"/>
+  </url>
+  <url>
+    <loc>https://trocarworks.site/en/</loc>
+    <lastmod>2026-10-15</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://trocarworks.site/en/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://trocarworks.site/zh/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://trocarworks.site/"/>
+  </url>
+  <url>
+    <loc>https://trocarworks.site/zh/peeper/</loc>
+    <lastmod>2026-10-15</lastmod>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://trocarworks.site/zh/peeper/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://trocarworks.site/en/peeper/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://trocarworks.site/"/>
+  </url>
+  <url>
+    <loc>https://trocarworks.site/en/peeper/</loc>
+    <lastmod>2026-10-15</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://trocarworks.site/en/peeper/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://trocarworks.site/zh/peeper/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://trocarworks.site/"/>
+  </url>
+</urlset>

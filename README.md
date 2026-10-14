@@ -10,6 +10,8 @@ TROCAR Works 静态站点，托管于 GitHub Pages，域名 `https://trocarworks
 
 ```
 index.html            入口：按浏览器语言跳 /zh/ 或 /en/（跳转壳，noindex）
+sitemap.xml           四个内容页 + hreflang 交叉声明（与页内 <head> 一致）
+robots.txt            全放行 + 指向 sitemap
 zh/
 ├── index.html        工作室首页 · 中文
 └── peeper/index.html Peeper 游戏页 · 中文
